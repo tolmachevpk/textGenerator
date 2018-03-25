@@ -1,5 +1,8 @@
+# coding: utf-8
 import random
 import re
+import os
+import argparse
 
 
 class Dictogram():
@@ -34,12 +37,26 @@ class Dictogram():
         return l
 
 
-s = input().lower()
-f = re.sub('\d+', '', s)
-a = Dictogram()
-a.upgrade(f)
+parser = argparse.ArgumentParser()
+parser.add_argument('input_dir', type=str, help='Input path to directory')
+parser.add_argument('length', type=int, help='Write length of sentence')
+args = parser.parse_args()
+if args.input_dir != None:
+    for top, dirs, files in os.walk(args.input_dir):
+        for nm in files:
+            path = str(os.path.join(top, nm))
+            file = open(path, 'r', encoding='cp1251')
+            s = file.read().lower()
+            f = re.sub('\d+', '', s)
+            a = Dictogram()
+            a.upgrade(f)
+else:
+    s = input().lower()
+    f = re.sub('\d+', '', s)
+    a = Dictogram()
+    a.upgrade(f)
 start = a.make_random_start()
-result = a.make_random_sentence(start, 3)
+result = a.make_random_sentence(start, args.length)
 for i in result:
     print(i, end=' ')
 
