@@ -58,5 +58,3 @@ else:
         file.write(i)
         file.write(' ')
     file.close()
-
-# python generate.py --model /Users/Peter/Documents/python/Review-1/textgenerator/model.txt --seed i --length 10 --output /Users/Peter/Documents/python/Review-1/textgenerator/result.txt

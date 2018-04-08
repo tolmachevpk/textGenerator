@@ -70,5 +70,3 @@ else:
         upgrade(myMap, f)
 
 json.dump(myMap, open(namespace.model, 'tw', encoding='utf-8'))
-
-# python train.py --input-dir /Users/Peter/Documents/python/Review-1/textgenerator/badboy --model /Users/Peter/Documents/python/Review-1/textgenerator/model.txt --lc
