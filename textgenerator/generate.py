@@ -1,34 +1,43 @@
 import json
 import random
 import sys
-import os
 import argparse
 
 
-#отпарсим аргументы терминала
+# отпарсим аргументы терминала
 parser = argparse.ArgumentParser(description='generate')
-parser.add_argument('--model', default=None, help='Путь к файлу, из которого загружается модель')
-parser.add_argument('--seed', default=None, help='Начальное слово')
-parser.add_argument('--length', default=-1, help='Длина генерируемой последовательности')
-parser.add_argument('--output', default=None, help='Файл, в который следует выводить результат')
+parser.add_argument(
+    '--model',
+    default=None,
+    help='Путь к файлу, из которого загружается модель'
+)
+parser.add_argument(
+    '--seed',
+    default=None,
+    help='Начальное слово'
+)
+parser.add_argument(
+    '--length',
+    default=-1,
+    help='Длина генерируемой последовательности'
+)
+parser.add_argument(
+    '--output',
+    default=None,
+    help='Файл, в который следует выводить результат'
+)
 namespace = parser.parse_args()
 
-if namespace.model == None:
-    print('Путь к файлу, из которого загружается модель, не указан')
-    sys.exit()
-if not os.path.exists(namespace.model):
-    print('Путь к файлу, из которого загружается модель, указан неверно')
-    sys.exit()
 if int(namespace.length) < 0:
-    print('Длина генерируемой последовательности либо не указана, либо не корректна')
+    print('Длина генерируемой последовательности либо не корректна')
     sys.exit()
 
 dictogr = dict()
-dictogr = json.load(open(namespace.model, 'r')) #скачаем словарь
+dictogr = json.load(open(namespace.model, 'r'))  # скачаем словарь
 
-#сгенерируем текст
+# сгенерируем текст
 result = list()
-if namespace.seed == None:
+if namespace.seed is None:
     l = random.choice(list(dictogr.keys()))
     while l == '':
         l = random.choice(list(dictogr.keys()))
@@ -39,11 +48,15 @@ for i in range(int(namespace.length) - 1):
     l = random.choice(list(dictogr[result[i]].keys()))
     result.append(l)
 
-#выведем результат
-if namespace.output == None:
+# выведем результат
+if namespace.output is None:
     for i in result:
         print(i, end=' ')
 else:
-    file = open(namespace.output, 'w')
-    file.write(result)
+    file = open(namespace.output, 'a', encoding='utf-8')
+    for i in result:
+        file.write(i)
+        file.write(' ')
     file.close()
+
+# python generate.py --model /Users/Peter/Documents/python/Review-1/textgenerator/model.txt --seed i --length 10 --output /Users/Peter/Documents/python/Review-1/textgenerator/result.txt

@@ -30,18 +30,18 @@ if __name__ == '__main__':
         s_girl = "She <- is nice) "
 
         for fold_num in range(1):
-            os.mkdir("./{}/{}".format(name, fold_num))
+            os.mkdir("{}/{}".format(name, fold_num))
             for text_num in range(2):
-                with open("./{2}/{0}/{1}.txt".format(fold_num, text_num, name), 'w') as fout:
+                with open("{2}/{0}/{1}.txt".format(fold_num, text_num, name), 'w') as fout:
                     fout.write((s_boy * random.randint(1, 10000) + '\n') * random.randint(5, 100))
 
-        os.mkdir("./{}/0/girl".format(name))
+        os.mkdir("{}/0/girl".format(name))
         for text_num in range(0, 1):
-            with open("./{1}/0/girl/{0}.txt".format(text_num, name), 'w') as fout:
+            with open("{1}/0/girl/{0}.txt".format(text_num, name), 'w') as fout:
                 fout.write((s_girl * random.randint(1, 10000) + '\n') * random.randint(5, 100))
 
-    model_path = './{0}/model'.format(student)
-    result_path = './{0}/result'.format(student)
+    model_path = '{0}/model.txt'.format(student)
+    result_path = '{0}/result.txt'.format(student)
 
     tests = {
         'badboy': [{
@@ -65,7 +65,7 @@ if __name__ == '__main__':
 
     for test_case in tests.keys():
         # test for code not failed
-        command = 'python {0}/train.py --input-dir ./{2} --model {1} --lc'.format(
+        command = 'python {0}/train.py --input-dir {2} --model {1} --lc'.format(
             student, model_path,
             test_case
         )
