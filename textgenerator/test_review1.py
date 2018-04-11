@@ -40,8 +40,8 @@ if __name__ == '__main__':
             with open("{1}/0/girl/{0}.txt".format(text_num, name), 'w') as fout:
                 fout.write((s_girl * random.randint(1, 10000) + '\n') * random.randint(5, 100))
 
-    model_path = '{0}/model.txt'.format(student)
-    result_path = '{0}/result.txt'.format(student)
+    model_path = '{0}/model'.format(student)
+    result_path = '{0}/result'.format(student)
 
     tests = {
         'badboy': [{
