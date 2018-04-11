@@ -2,6 +2,7 @@ import re
 import argparse
 import json
 import os
+import collections
 
 
 def upgrade(selfmap, iterable):  # заполнение словаря
@@ -15,11 +16,13 @@ def upgrade(selfmap, iterable):  # заполнение словаря
                 selfmap[j][i] = 1
             j = i
         else:
-            selfmap[j] = dict({i: 1})
+            selfmap[j] = collections.Counter()
+            selfmap[j][i] += 1
             j = i
     return selfmap
 
 
+# отпарсим аргументы терминала
 parser = argparse.ArgumentParser(description='train')
 parser.add_argument(
     '--input-dir',
@@ -39,34 +42,35 @@ parser.add_argument(
 )
 namespace = parser.parse_args()
 
-myMap = dict()
-if namespace.dir is not None:
-    for top, dirs, files in os.walk(namespace.dir):
-        for nm in files:
-            path = str(os.path.join(top, nm))
-            workFile = open(path, 'r', encoding='utf-8')
-            line = str
-            if namespace.lc is not None:
-                line = workFile.readline().lower()
-            else:
-                line = workFile.readline()
-            while line:
-                f = re.sub('\d+', '', line)
-                upgrade(myMap, f)
+if __name__ == '__main__':
+    myMap = dict()
+    if namespace.dir is not None:
+        for top, dirs, files in os.walk(namespace.dir):
+            for nm in files:
+                path = str(os.path.join(top, nm))
+                workFile = open(path, 'r', encoding='utf-8')
+                line = str
                 if namespace.lc is not None:
                     line = workFile.readline().lower()
                 else:
                     line = workFile.readline()
-            workFile.close()
-else:
-    print('Введите текст и закончите его пустой строкой')
-    s = str
-    while s != '':
-        if namespace.lc is not None:
-            s = input().lower()
-        else:
-            s = input().read()
-        f = re.sub('\d+', '', s)
-        upgrade(myMap, f)
+                while line:
+                    f = re.sub('\d+', '', line)
+                    upgrade(myMap, f)
+                    if namespace.lc is not None:
+                        line = workFile.readline().lower()
+                    else:
+                        line = workFile.readline()
+                workFile.close()
+    else:
+        print('Введите текст и закончите его пустой строкой')
+        s = str
+        while s != '':
+            if namespace.lc is not None:
+                s = input().lower()
+            else:
+                s = input().read()
+            f = re.sub('\d+', '', s)
+            upgrade(myMap, f)
 
-json.dump(myMap, open(namespace.model, 'tw', encoding='utf-8'))
+    json.dump(myMap, open(namespace.model, 'tw', encoding='utf-8'))

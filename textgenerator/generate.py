@@ -28,33 +28,39 @@ parser.add_argument(
 )
 namespace = parser.parse_args()
 
-if int(namespace.length) < 0:
-    print('Длина генерируемой последовательности либо не корректна')
-    sys.exit()
 
-dictogr = dict()
-dictogr = json.load(open(namespace.model, 'r'))  # скачаем словарь
+if __name__ == '__main__':
+    if int(namespace.length) < 0:
+        print('Длина генерируемой последовательности либо не корректна')
+        sys.exit()
 
-# сгенерируем текст
-result = list()
-if namespace.seed is None:
-    l = random.choice(list(dictogr.keys()))
-    while l == '':
+    dictogr = dict()
+    dictogr = json.load(open(namespace.model, 'r'))  # скачаем словарь
+
+    # сгенерируем текст
+    result = list()
+    if namespace.seed is None:
         l = random.choice(list(dictogr.keys()))
-    result.append(l)
-else:
-    result.append(namespace.seed)
-for i in range(int(namespace.length) - 1):
-    l = random.choice(list(dictogr[result[i]].keys()))
-    result.append(l)
+        while l == '':
+            l = random.choice(list(dictogr.keys()))
+        result.append(l)
+    else:
+        result.append(namespace.seed)
+    if namespace.seed in dictogr.keys():
+        pass
+    else:
+        raise SystemError
+    for i in range(int(namespace.length) - 1):
+        l = random.choice(list(dictogr[result[i]].keys()))
+        result.append(l)
 
-# выведем результат
-if namespace.output is None:
-    for i in result:
-        print(i, end=' ')
-else:
-    file = open(namespace.output, 'a', encoding='utf-8')
-    for i in result:
-        file.write(i)
-        file.write(' ')
-    file.close()
+    # выведем результат
+    if namespace.output is None:
+        for i in result:
+            print(i, end=' ')
+    else:
+        file = open(namespace.output, 'a', encoding='utf-8')
+        for i in result:
+            file.write(i)
+            file.write(' ')
+        file.close()
