@@ -19,6 +19,15 @@ def upgrade(selfmap, iterable):  # заполнение словаря
             selfmap[j] = collections.Counter()
             selfmap[j][i] += 1
             j = i
+    if j in selfmap:
+        if 'END' in selfmap:
+            selfmap[j]['END'] += 1
+        else:
+            selfmap[j]['END'] = 1
+    else:
+        selfmap[j] = collections.Counter()
+        selfmap[j]['END'] += 1
+
     return selfmap
 
 

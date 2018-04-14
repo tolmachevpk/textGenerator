@@ -51,8 +51,17 @@ if __name__ == '__main__':
     else:
         raise SystemError
     for i in range(int(namespace.length) - 1):
-        l = random.choice(list(dictogr[result[i]].keys()))
-        result.append(l)
+        try:
+            if len(list(dictogr[result[i]].keys())) == 1\
+                    and list(dictogr[result[i]].keys())[0] == 'END':
+                raise NameError
+            else:
+                l = random.choice(list(dictogr[result[i]].keys()))
+                while l == 'END':
+                    l = random.choice(list(dictogr[result[i]].keys()))
+            result.append(l)
+        except:
+            break
 
     # выведем результат
     if namespace.output is None:
