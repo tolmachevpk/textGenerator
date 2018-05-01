@@ -1,10 +1,20 @@
+# Файл генерирует текст с помощью созданного словаря в train.py
+# Автор: Толмачев Петр Константинович
+# Версия №4
+
+
 import json
 import random
 import sys
 import argparse
 
 
-# отпарсим аргументы терминала
+"""
+Отпарсим аргументы терминала.
+Вводить в ввиде:
+python --model <путь к файлу, куда сохранять словарь> '--seed <начальное слово>'
+'-- length <число - длина генерируемого текста>' '--output <файл, в который записываем результат>'
+"""
 parser = argparse.ArgumentParser(description='generate')
 parser.add_argument(
     '--model',
@@ -26,50 +36,51 @@ parser.add_argument(
     default=None,
     help='Файл, в который следует выводить результат'
 )
-namespace = parser.parse_args()
 
 
 if __name__ == '__main__':
+    namespace = parser.parse_args()
     if int(namespace.length) < 0:
-        print('Длина генерируемой последовательности либо не корректна')
-        sys.exit()
+        raise ValueError('Введенное число некорректно')
 
-    dictogr = dict()
-    dictogr = json.load(open(namespace.model, 'r'))  # скачаем словарь
+    with open(namespace.model, 'r') as dictogram:
+        dictogr = json.load(dictogram)  # скачаем словарь
+    dictogram.close()
 
-    # сгенерируем текст
+    """
+    Сгенерируем сам текст:
+    """
     result = list()
     if namespace.seed is None:
-        l = random.choice(list(dictogr.keys()))
-        while l == '':
+        while True:
             l = random.choice(list(dictogr.keys()))
+            if l != '':
+                break
         result.append(l)
     else:
         result.append(namespace.seed)
-    if namespace.seed in dictogr.keys():
-        pass
-    else:
+    if namespace.seed not in dictogr.keys():
         raise SystemError
     for i in range(int(namespace.length) - 1):
-        try:
-            if len(list(dictogr[result[i]].keys())) == 1\
-                    and list(dictogr[result[i]].keys())[0] == 'END':
-                raise NameError
-            else:
-                l = random.choice(list(dictogr[result[i]].keys()))
-                while l == 'END':
-                    l = random.choice(list(dictogr[result[i]].keys()))
-            result.append(l)
-        except:
+        if len(dictogr[result[i]].keys()) == 1\
+                and list(dictogr[result[i]].keys())[0] == 'END':
             break
+        else:
+            while True:
+                l = random.choice(list(dictogr[result[i]].keys()))
+                if l != 'END':
+                    break
+        result.append(l)
 
-    # выведем результат
+    """
+    Выведем результат:
+    """
     if namespace.output is None:
         for i in result:
             print(i, end=' ')
     else:
-        file = open(namespace.output, 'a', encoding='utf-8')
-        for i in result:
-            file.write(i)
-            file.write(' ')
+        with open(namespace.output, 'a', encoding='utf-8') as file:
+            for i in result:
+                file.write(i)
+                file.write(' ')
         file.close()

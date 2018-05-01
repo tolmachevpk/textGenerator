@@ -1,3 +1,8 @@
+# Файл создает словарь из данного текста, который впоследствии обрабатывается в generate.py
+# Автор: Толмачев Петр Константинович
+# Версия №4
+
+
 import re
 import argparse
 import json
@@ -31,7 +36,11 @@ def upgrade(selfmap, iterable):  # заполнение словаря
     return selfmap
 
 
-# отпарсим аргументы терминала
+"""
+Отпарсим аргументы терминала.
+Вводить в ввиде:
+python --input-dir <путь до директории> --model <путь к файлу, куда сохранять словарь> '--lc'
+"""
 parser = argparse.ArgumentParser(description='train')
 parser.add_argument(
     '--input-dir',
@@ -49,37 +58,42 @@ parser.add_argument(
     default=None,
     help='Приведение текстов к lowercase', nargs='*'
 )
-namespace = parser.parse_args()
 
 if __name__ == '__main__':
+    namespace = parser.parse_args()
     myMap = dict()
+    """
+    Переведем данные тексты в удобный для нас формат:
+    """
     if namespace.dir is not None:
         for top, dirs, files in os.walk(namespace.dir):
             for nm in files:
                 path = str(os.path.join(top, nm))
-                workFile = open(path, 'r', encoding='utf-8')
-                line = str
-                if namespace.lc is not None:
-                    line = workFile.readline().lower()
-                else:
-                    line = workFile.readline()
-                while line:
-                    f = re.sub('\d+', '', line)
-                    upgrade(myMap, f)
-                    if namespace.lc is not None:
-                        line = workFile.readline().lower()
-                    else:
+                with open(path, 'r', encoding='utf-8') as workFile:
+                    while True:
                         line = workFile.readline()
+                        if namespace.lc is not None:
+                            line = line.lower()
+                        if len(line) == 0:
+                            break
+                        f = re.sub('\d+', '', line)
+                        upgrade(myMap, f)
                 workFile.close()
     else:
-        print('Введите текст и закончите его пустой строкой')
-        s = str
-        while s != '':
+        print('Введите текст и закончите символом\
+         конца файла(специальная комбинация клавиш)')
+        while True:
+            s = input()
             if namespace.lc is not None:
-                s = input().lower()
-            else:
-                s = input().read()
+                s = s.lower()
+            if len(s) == 0:
+                break
             f = re.sub('\d+', '', s)
             upgrade(myMap, f)
 
-    json.dump(myMap, open(namespace.model, 'tw', encoding='utf-8'))
+    """
+    Запишем в файл полученный словарь:
+    """
+    with open(namespace.model, 'tw', encoding='utf-8') as json_file:
+        json.dump(myMap, json_file)
+    json_file.close()
