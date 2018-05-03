@@ -10,30 +10,8 @@ import os
 import collections
 
 
-def upgrade(selfmap, iterable):  # заполнение словаря
-    j = ''
-    result = re.findall('\w+', iterable)
-    for i in result:
-        if j in selfmap:
-            if i in selfmap[j]:
-                selfmap[j][i] += 1
-            else:
-                selfmap[j][i] = 1
-            j = i
-        else:
-            selfmap[j] = collections.Counter()
-            selfmap[j][i] += 1
-            j = i
-    if j in selfmap:
-        if 'END' in selfmap:
-            selfmap[j]['END'] += 1
-        else:
-            selfmap[j]['END'] = 1
-    else:
-        selfmap[j] = collections.Counter()
-        selfmap[j]['END'] += 1
-
-    return selfmap
+def remap_keys(mapping):
+     return [{'key':k, 'value': v} for k, v in mapping.iteritems()]
 
 
 """
@@ -61,7 +39,7 @@ parser.add_argument(
 
 if __name__ == '__main__':
     namespace = parser.parse_args()
-    myMap = dict()
+    myMap = collections.Counter()
     """
     Переведем данные тексты в удобный для нас формат:
     """
@@ -77,7 +55,8 @@ if __name__ == '__main__':
                         if len(line) == 0:
                             break
                         f = re.sub('\d+', '', line)
-                        upgrade(myMap, f)
+                        result = re.findall('\w+', f)
+                        myMap.update(zip(result[:-1], result[1:]))
                 workFile.close()
     else:
         print('Введите текст и закончите символом\
@@ -89,11 +68,12 @@ if __name__ == '__main__':
             if len(s) == 0:
                 break
             f = re.sub('\d+', '', s)
-            upgrade(myMap, f)
+            result = re.findall('\w+', f)
+            myMap.update(zip(result[:-1], result[1:]))
 
     """
     Запишем в файл полученный словарь:
     """
     with open(namespace.model, 'tw', encoding='utf-8') as json_file:
-        json.dump(myMap, json_file)
+        json.dump(list(myMap), json_file)
     json_file.close()
