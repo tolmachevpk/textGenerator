@@ -44,8 +44,17 @@ if __name__ == '__main__':
         raise ValueError('Введенное число некорректно')
 
     with open(namespace.model, 'r') as dictogram:
-        dictogr = json.load(dictogram)  # скачаем словарь
+        thing = json.load(dictogram)  # скачаем словарь
     dictogram.close()
+    dictogr = dict()
+    for key, value in thing:
+        if key not in dictogr:
+            dictogr[key] = dict()
+            dictogr[key][value] = 1
+        if value in dictogr[key]:
+            dictogr[key][value] += 1
+        else:
+            dictogr[key][value] = 1
 
     """
     Сгенерируем сам текст:
