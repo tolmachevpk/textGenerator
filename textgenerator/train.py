@@ -1,6 +1,10 @@
-# Файл создает словарь из данного текста, который впоследствии обрабатывается в generate.py
-# Автор: Толмачев Петр Константинович
-# Версия №4
+"""Файл создает словарь из данного текста,
+который впоследствии обрабатывается в generate.py
+
+Автор: Толмачев Петр Константинович
+
+Версия №5
+"""
 
 
 import re
@@ -10,14 +14,20 @@ import os
 import collections
 
 
-def remap_keys(mapping):
-     return [{'key':k, 'value': v} for k, v in mapping.iteritems()]
+"""Функция парсит полученную строку, удаляет все лишнее, возвращает list()"""
+def parse_line(line):
+    f = re.sub('\d+', '', line)
+    result = re.findall('\w+', f)
+    return result
 
 
-"""
-Отпарсим аргументы терминала.
-Вводить в ввиде:
-python --input-dir <путь до директории> --model <путь к файлу, куда сохранять словарь> '--lc'
+"""Отпарсим аргументы терминала.
+
+Использование:
+>>> python --input-dir <путь до директории>
+    --model <путь к файлу, куда сохранять словарь> '--lc'
+
+Подробнее описано в help.
 """
 parser = argparse.ArgumentParser(description='train')
 parser.add_argument(
@@ -40,13 +50,13 @@ parser.add_argument(
 if __name__ == '__main__':
     namespace = parser.parse_args()
     myMap = collections.Counter()
-    """
-    Переведем данные тексты в удобный для нас формат:
-    """
+
+    # Проверим все директории на наличие читаемых файлов, если указан путь
     if namespace.dir is not None:
         for top, dirs, files in os.walk(namespace.dir):
             for nm in files:
                 path = str(os.path.join(top, nm))
+                # Обработаем данный файл
                 with open(path, 'r', encoding='utf-8') as workFile:
                     while True:
                         line = workFile.readline()
@@ -56,7 +66,9 @@ if __name__ == '__main__':
                             break
                         f = re.sub('\d+', '', line)
                         result = re.findall('\w+', f)
-                        myMap.update(zip(result[:-1], result[1:]))
+                        myMap.update(
+                            zip(parse_line(line)[:-1], parse_line(line)[1:])
+                        )
                 workFile.close()
     else:
         print('Введите текст и закончите символом\
@@ -67,13 +79,11 @@ if __name__ == '__main__':
                 s = s.lower()
             if len(s) == 0:
                 break
-            f = re.sub('\d+', '', s)
-            result = re.findall('\w+', f)
-            myMap.update(zip(result[:-1], result[1:]))
+            myMap.update(
+                zip(parse_line(s)[:-1], parse_line(s)[1:])
+            )
 
-    """
-    Запишем в файл полученный словарь:
-    """
+    # Запишем результат в файл
     with open(namespace.model, 'tw', encoding='utf-8') as json_file:
         json.dump(list(myMap), json_file)
     json_file.close()
