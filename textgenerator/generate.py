@@ -63,18 +63,16 @@ if __name__ == '__main__':
             dictogr[key][value] += 1
         else:
             dictogr[key][value] = 1
+    lastWord = thing[len(thing) - 1][1]
 
     # Начнем генерацию текста
     result = list()
     if namespace.seed is None:
-        while True:
-            l = random.choice(list(dictogr.keys()))
-            if l != '':
-                break
+        l = random.choice(list(dictogr.keys()))
         result.append(l)
     else:
         result.append(namespace.seed)
-    if namespace.seed not in dictogr.keys():
+    if namespace.seed not in dictogr.keys() and lastWord != namespace.seed:
         raise SystemError
     for i in range(int(namespace.length) - 1):
         try:

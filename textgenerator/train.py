@@ -10,6 +10,7 @@
 import re
 import argparse
 import json
+import sys
 import os
 import collections
 
@@ -74,7 +75,10 @@ if __name__ == '__main__':
         print('Введите текст и закончите символом\
          конца файла(специальная комбинация клавиш)')
         while True:
-            s = input()
+            try:
+                s = input()
+            except:
+                break
             if namespace.lc is not None:
                 s = s.lower()
             if len(s) == 0:
