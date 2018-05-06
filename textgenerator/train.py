@@ -3,7 +3,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №5
+Версия №7
 """
 
 
@@ -76,13 +76,11 @@ if __name__ == '__main__':
          конца файла(специальная комбинация клавиш)')
         while True:
             try:
-                s = input()
+                s = sys.stdin.readline()
             except:
                 break
             if namespace.lc is not None:
                 s = s.lower()
-            if len(s) == 0:
-                break
             myMap.update(
                 zip(parse_line(s)[:-1], parse_line(s)[1:])
             )
