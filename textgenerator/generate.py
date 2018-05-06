@@ -2,7 +2,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №5
+Версия №7
 """
 
 
@@ -84,7 +84,8 @@ if __name__ == '__main__':
     # Выведем результат
     if namespace.output is None:
         for i in result:
-            print(i, end=' ')
+            sys.stdout.write(i)
+            sys.stdout.write(' ')
     else:
         with open(namespace.output, 'a', encoding='utf-8') as file:
             for i in result:
