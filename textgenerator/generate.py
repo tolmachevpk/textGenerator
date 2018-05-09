@@ -2,7 +2,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №7
+Версия №8
 """
 
 
@@ -75,9 +75,9 @@ if __name__ == '__main__':
     if namespace.seed not in dictogr.keys() and lastWord != namespace.seed:
         raise SystemError
     for i in range(int(namespace.length) - 1):
-        try:
+        if len(list(dictogr[result[i]].keys())) > 0:
             l = random.choice(list(dictogr[result[i]].keys()))
-        except:
+        else:
             break
         result.append(l)
 
