@@ -75,8 +75,9 @@ if __name__ == '__main__':
     if namespace.seed not in dictogr.keys() and lastWord != namespace.seed:
         raise SystemError
     for i in range(int(namespace.length) - 1):
-        if len(list(dictogr[result[i]].keys())) > 0:
-            l = random.choice(list(dictogr[result[i]].keys()))
+        help_val = list(dictogr[result[i]].keys())
+        if len(help_val) > 0:
+            l = random.choice(help_val)
         else:
             break
         result.append(l)
