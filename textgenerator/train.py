@@ -65,8 +65,6 @@ if __name__ == '__main__':
                             line = line.lower()
                         if len(line) == 0:
                             break
-                        f = re.sub('\d+', '', line)
-                        result = re.findall('\w+', f)
                         myMap.update(
                             zip(parse_line(line)[:-1], parse_line(line)[1:])
                         )
