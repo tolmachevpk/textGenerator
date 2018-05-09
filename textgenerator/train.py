@@ -3,7 +3,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №8
+Версия №9
 """
 
 
@@ -73,8 +73,9 @@ if __name__ == '__main__':
         print('Введите текст и закончите символом\
          конца файла(специальная комбинация клавиш)')
         while True:
+            s = sys.stdin
             try:
-                s = sys.stdin.readline()
+                f = s.readline()
             except:
                 break
             if namespace.lc is not None:

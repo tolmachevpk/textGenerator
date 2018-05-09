@@ -2,7 +2,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №8
+Версия №9
 """
 
 
@@ -10,6 +10,13 @@ import json
 import random
 import sys
 import argparse
+
+
+"""Функция отвечает за вывод текста в файл или консоль."""
+def output_text(file, result):
+    for i in result:
+        file.write(i)
+        file.write(' ')
 
 
 """Отпарсим аргументы терминала.
@@ -84,12 +91,9 @@ if __name__ == '__main__':
 
     # Выведем результат
     if namespace.output is None:
-        for i in result:
-            sys.stdout.write(i)
-            sys.stdout.write(' ')
+        console = sys.stdout
+        output_text(console, result)
     else:
         with open(namespace.output, 'a', encoding='utf-8') as file:
-            for i in result:
-                file.write(i)
-                file.write(' ')
+            output_text(file, result)
         file.close()
