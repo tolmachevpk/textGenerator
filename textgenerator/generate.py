@@ -2,7 +2,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №9
+Версия №10
 """
 
 
@@ -17,6 +17,34 @@ def output_text(file, result):
     for i in result:
         file.write(i)
         file.write(' ')
+
+
+def output(result):
+    if namespace.output is None:
+        console = sys.stdout
+        output_text(console, result)
+    else:
+        with open(namespace.output, 'a', encoding='utf-8') as file:
+            output_text(file, result)
+
+
+def generation(dictogr):
+    result = list()
+    if namespace.seed is None:
+        l = random.choice(list(dictogr.keys()))
+        result.append(l)
+    else:
+        result.append(namespace.seed)
+    if namespace.seed not in dictogr.keys():
+        raise SystemError
+    for i in range(int(namespace.length) - 1):
+        help_val = list(dictogr[result[i]].keys())
+        if len(help_val) > 0:
+            l = random.choice(help_val)
+        if len(help_val) == 0:
+            break
+        result.append(l)
+    return result
 
 
 """Отпарсим аргументы терминала.
@@ -59,41 +87,10 @@ if __name__ == '__main__':
 
     # скачаем словарь и переведем в удобный для работы вид (словарь словарей)
     with open(namespace.model, 'r') as dictogram:
-        thing = json.load(dictogram)
-    dictogram.close()
-    dictogr = dict()
-    for key, value in thing:
-        if key not in dictogr:
-            dictogr[key] = dict()
-            dictogr[key][value] = 1
-        if value in dictogr[key]:
-            dictogr[key][value] += 1
-        else:
-            dictogr[key][value] = 1
-    lastWord = thing[len(thing) - 1][1]
+        dictogr = json.load(dictogram)
 
     # Начнем генерацию текста
-    result = list()
-    if namespace.seed is None:
-        l = random.choice(list(dictogr.keys()))
-        result.append(l)
-    else:
-        result.append(namespace.seed)
-    if namespace.seed not in dictogr.keys() and lastWord != namespace.seed:
-        raise SystemError
-    for i in range(int(namespace.length) - 1):
-        help_val = list(dictogr[result[i]].keys())
-        if len(help_val) > 0:
-            l = random.choice(help_val)
-        else:
-            break
-        result.append(l)
+    result = generation(dictogr)
 
     # Выведем результат
-    if namespace.output is None:
-        console = sys.stdout
-        output_text(console, result)
-    else:
-        with open(namespace.output, 'a', encoding='utf-8') as file:
-            output_text(file, result)
-        file.close()
+    output(result)
