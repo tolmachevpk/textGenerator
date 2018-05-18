@@ -2,7 +2,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №10
+Версия №11
 """
 
 
@@ -12,14 +12,16 @@ import sys
 import argparse
 
 
-"""Функция отвечает за вывод текста в файл или консоль."""
+
 def output_text(file, result):
+    """Функция отвечает за вывод текста в файл или консоль."""
     for i in result:
         file.write(i)
         file.write(' ')
 
 
 def output(result):
+    """Функция проверяет, куда нужно выводить файл, и выводит туда."""
     if namespace.output is None:
         console = sys.stdout
         output_text(console, result)
@@ -29,6 +31,7 @@ def output(result):
 
 
 def generation(dictogr):
+    """Функция генерирует текст нужной длины."""
     result = list()
     if namespace.seed is None:
         l = random.choice(list(dictogr.keys()))
