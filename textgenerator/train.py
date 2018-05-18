@@ -3,7 +3,7 @@
 
 Автор: Толмачев Петр Константинович
 
-Версия №9
+Версия №10
 """
 
 
@@ -15,11 +15,30 @@ import os
 import collections
 
 
-"""Функция парсит полученную строку, удаляет все лишнее, возвращает list()"""
 def parse_line(line):
+    """Функция парсит полученную строку, удаляет все лишнее, возвращает list()"""
     f = re.sub('\d+', '', line)
     result = re.findall('\w+', f)
     return result
+
+
+def bigram_to_json(my_list):
+    """Функция переводит в удобный для работы формат и записывает в json файл"""
+    dictogr = dict()
+    for key, value in my_list:
+        if key not in dictogr:
+            dictogr[key] = dict()
+            dictogr[key][value] = 1
+        elif value in dictogr[key]:
+            dictogr[key][value] += 1
+        else:
+            dictogr[key][value] = 1
+        if value not in dictogr:
+            dictogr[value] = dict()
+
+    # Запишем результат в файл
+    with open(namespace.model, 'tw', encoding='utf-8') as json_file:
+        json.dump(dictogr, json_file)
 
 
 """Отпарсим аргументы терминала.
@@ -50,7 +69,7 @@ parser.add_argument(
 
 if __name__ == '__main__':
     namespace = parser.parse_args()
-    myMap = collections.Counter()
+    my_map = collections.Counter()
 
     # Проверим все директории на наличие читаемых файлов, если указан путь
     if namespace.dir is not None:
@@ -59,32 +78,24 @@ if __name__ == '__main__':
                 path = str(os.path.join(top, nm))
                 # Обработаем данный файл
                 with open(path, 'r', encoding='utf-8') as workFile:
-                    while True:
-                        line = workFile.readline()
+                    for line in workFile:
                         if namespace.lc is not None:
                             line = line.lower()
                         if len(line) == 0:
                             break
-                        myMap.update(
+                        my_map.update(
                             zip(parse_line(line)[:-1], parse_line(line)[1:])
                         )
-                workFile.close()
     else:
-        print('Введите текст и закончите символом\
-         конца файла(специальная комбинация клавиш)')
-        while True:
-            s = sys.stdin
-            try:
-                f = s.readline()
-            except:
-                break
+        print('Введите текст и закончите символом '
+              'конца файла(специальная комбинация клавиш)')
+        s = sys.stdin
+        for line in s:
             if namespace.lc is not None:
-                s = s.lower()
-            myMap.update(
+                line = line.lower()
+            # что значит символ конца строки?
+            my_map.update(
                 zip(parse_line(s)[:-1], parse_line(s)[1:])
             )
 
-    # Запишем результат в файл
-    with open(namespace.model, 'tw', encoding='utf-8') as json_file:
-        json.dump(list(myMap), json_file)
-    json_file.close()
+    bigram_to_json(list(my_map))
