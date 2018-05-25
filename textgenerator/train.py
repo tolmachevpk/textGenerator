@@ -41,14 +41,22 @@ def bigram_to_json(my_list):
         json.dump(dictogr, json_file)
 
 
-"""Отпарсим аргументы терминала.
+def gen_file(dir):
+    """Функция возвращает все файлы из директории"""
+    if dir is None:
+        print('Введите текст и закончите символом '
+              'конца файла(специальная комбинация клавиш)')
+        return sys.stdin
+    else:
+        for top, dirs, files in os.walk(namespace.dir):
+            for nm in files:
+                path = str(os.path.join(top, nm))
+                # Обработаем данный файл
+                with open(path, 'r', encoding='utf-8') as workFile:
+                    yield workFile
 
-Использование:
->>> python --input-dir <путь до директории>
-    --model <путь к файлу, куда сохранять словарь> '--lc'
 
-Подробнее описано в help.
-"""
+
 parser = argparse.ArgumentParser(description='train')
 parser.add_argument(
     '--input-dir',
@@ -72,30 +80,12 @@ if __name__ == '__main__':
     my_map = collections.Counter()
 
     # Проверим все директории на наличие читаемых файлов, если указан путь
-    if namespace.dir is not None:
-        for top, dirs, files in os.walk(namespace.dir):
-            for nm in files:
-                path = str(os.path.join(top, nm))
-                # Обработаем данный файл
-                with open(path, 'r', encoding='utf-8') as workFile:
-                    for line in workFile:
-                        if namespace.lc is not None:
-                            line = line.lower()
-                        if len(line) == 0:
-                            break
-                        my_map.update(
-                            zip(parse_line(line)[:-1], parse_line(line)[1:])
-                        )
-    else:
-        print('Введите текст и закончите символом '
-              'конца файла(специальная комбинация клавиш)')
-        s = sys.stdin
-        for line in s:
+    for file in gen_file(namespace.dir):
+        for line in file:
             if namespace.lc is not None:
                 line = line.lower()
-            # что значит символ конца строки?
             my_map.update(
-                zip(parse_line(s)[:-1], parse_line(s)[1:])
+                zip(parse_line(line)[:-1], parse_line(line)[1:])
             )
 
-    bigram_to_json(list(my_map))
+    bigram_to_json(my_map)
