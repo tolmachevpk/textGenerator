@@ -50,16 +50,6 @@ def generation(dictogr):
     return result
 
 
-"""Отпарсим аргументы терминала.
-
-Использование:
->>> python --model <путь к файлу, куда сохранять словарь>
-    '--seed <начальное слово>'
-    '-- length <число - длина генерируемого текста>'
-    '--output <файл, в который записываем результат>'
-
-Подробнее описано в help.
-"""
 parser = argparse.ArgumentParser(description='generate')
 parser.add_argument(
     '--model',
